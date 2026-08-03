@@ -1,0 +1,10 @@
+datasets>=2.14
+openai>=1.30
+numpy>=1.24
+scipy>=1.11
+matplotlib>=3.7
+tqdm>=4.65
+# Optional (only needed for --backend local in run_experiment.py):
+# vllm>=0.5
+# xgrammar>=0.1
+# transformers>=4.44
