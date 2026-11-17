@@ -1,6 +1,6 @@
 # REHEARSE: Experiential Rehearsal for Verbal Confidence Calibration
 
-Anonymized code release for the ACL/ARR submission
+Code release for the EACL 2026 Findings paper
 *"REHEARSE: Experiential Rehearsal for Verbal Confidence Calibration in Large Language Models"*.
 
 REHEARSE is a training-free calibration method: the model plays a credence-calibration
@@ -22,12 +22,15 @@ export OPENAI_API_KEY=<key>       # for o3-mini (or any OpenAI-compatible endpoi
 
 ## Reproducing the paper
 
+### Main results and Ablations 1-3
+
 `run_experiment.py` is the single, self-contained pipeline that produced every
-number in the paper. It runs the credence game, builds the trajectory prefix,
-and evaluates REHEARSE together with all inference-time baselines
-(Uncalibrated, Top-K, Self-Cal, FaR, plus additional CoT and reflective
-variants) in one process. Open-weight models are served with local vLLM on
-A100-80GB (bf16); o3-mini is called through the OpenAI-compatible API.
+number in the main results and the first three ablations. It runs the credence
+game, builds the trajectory prefix, and evaluates REHEARSE together with all
+inference-time baselines (Uncalibrated, Top-K, Self-Cal, FaR, plus additional
+CoT and reflective variants) in one process. Open-weight models are served with
+local vLLM on A100-80GB (bf16); o3-mini is called through the OpenAI-compatible
+API.
 
 ```bash
 # LLaMA-3.1-8B on MMLU-Pro, seed 42, local vLLM
@@ -46,9 +49,40 @@ Each run writes a JSON to
 containing per-method aggregate metrics *and* the per-sample outputs
 (`parsed_correct`, `parsed_conf`, `parsed`) for post-hoc auditing.
 
-**Ablation sweeps** are controlled from the same script:
+Ablation sweeps are controlled from the same script:
 - `--n_game {10,25,50,100}` — game round count (Ablation 2)
 - `--scoring_rule {log,symmetric}` — scoring rule (Ablation 3)
+
+### Ablation 4 — prefix variants
+
+`rebuttal_experiments.py` runs the five prefix variants compared in
+Sec. 4.6 and Appendix F of the paper. Each variant reuses an existing
+`experiment_*.json` game trajectory (no game replay) and writes a
+`rebuttal_<variant>_*.json`:
+
+```bash
+# Static hint (fixed generic "you tend to over-report confidence" prompt)
+python rebuttal_experiments.py --experiment e1a \
+    --model meta-llama/Meta-Llama-3.1-8B-Instruct \
+    --dataset mmlu_pro --seed 42
+
+# Other variants: e1b (adaptive hint), e3a (shuffled correctness),
+# e3b (random scores), e4 (5-sentence compressed prefix),
+# e2 (cross-model prefix; requires --cross_model_short <other model short name>).
+```
+
+### Ablation 4 — CoT-matched baseline sweep
+
+`rebuttal_cot_baseline.py` adds a kojima-style CoT trigger to each of Top-K,
+Self-Cal, FaR so every baseline shares REHEARSE's reasoning scaffold (Sec. 4.6
+and Appendix G):
+
+```bash
+python rebuttal_cot_baseline.py --method topk_cot \
+    --model meta-llama/Meta-Llama-3.1-8B-Instruct \
+    --dataset mmlu_pro --seed 42
+# --method also accepts selfcal_cot, far_cot.
+```
 
 ## Reproducing table numbers
 
@@ -86,10 +120,12 @@ python plot_pareto.py    # ECE-vs-Accuracy Pareto plot
 ## Repo layout
 
 ```
-run_experiment.py     # canonical paper pipeline (game + prefix + REHEARSE + all baselines)
-aggregate_metrics.py  # reproduce paper's Acc/ECE/Brier/AUROC from run_experiment.py JSONs
-plot_paper.py         # game-trajectory figure
-plot_pareto.py        # ECE-Accuracy Pareto figure
+run_experiment.py          # canonical paper pipeline (game + prefix + REHEARSE + Ablations 1-3)
+rebuttal_experiments.py    # Ablation 4 prefix variants (static hint, shuffled, random, compressed, cross-model)
+rebuttal_cot_baseline.py   # Ablation 4 CoT-matched baseline sweep (Top-K/Self-Cal/FaR + CoT)
+aggregate_metrics.py       # reproduce paper's Acc/ECE/Brier/AUROC from the JSONs above
+plot_paper.py              # game-trajectory figure
+plot_pareto.py             # ECE-Accuracy Pareto figure
 requirements.txt
 LICENSE
 ```
@@ -101,7 +137,7 @@ LICENSE
 - **TriviaQA** (`mandarjoshi/trivia_qa`, `rc.wikipedia.nocontext`), 500-item subsample per seed.
 - **GSM8K** (`openai/gsm8k`), 500-item subsample per seed.
 
-Seeds 42-46 control both the subsample and the game item order.
+Seeds 42-46 control both the test subsample and the game item order.
 
 ## License
 
