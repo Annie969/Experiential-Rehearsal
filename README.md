@@ -142,3 +142,16 @@ Seeds 42-46 control both the test subsample and the game item order.
 ## License
 
 MIT (see `LICENSE`).
+
+## Citation
+
+If you use REHEARSE, please cite:
+
+```bibtex
+@inproceedings{fang2026rehearse,
+  title     = {REHEARSE: Experiential Rehearsal for Verbal Confidence Calibration in Large Language Models},
+  author    = {Fang, Ke and Zhao, Tianyi and Wang, Qianwen and Cheng, Lu},
+  booktitle = {Findings of the Association for Computational Linguistics: EACL 2026},
+  year      = {2026},
+}
+```
