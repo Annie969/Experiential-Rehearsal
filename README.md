@@ -81,7 +81,7 @@ and Appendix G):
 python rebuttal_cot_baseline.py --method topk_cot \
     --model meta-llama/Meta-Llama-3.1-8B-Instruct \
     --dataset mmlu_pro --seed 42
-# --method also accepts selfcal_cot, far_cot.
+# --method also accepts selfcal_cot, far_cot
 ```
 
 ## Reproducing table numbers
