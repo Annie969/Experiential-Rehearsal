@@ -14,7 +14,7 @@ Design:
   - Reuse each baseline's parse function (parse_topk / parse_answer_conf /
     parse_far) unchanged.
 
-Results saved as rebuttal_cotb_<method>_<model>_<ds>_seed<s>_*.json.
+Results saved as ablation4_cot_<method>_<model>_<ds>_seed<s>_*.json.
 """
 # THREAD-CAP: some multi-user login hosts cap per-user pids low enough
 # that HuggingFace datasets' thread_map crashes; only applies when
@@ -217,7 +217,7 @@ def main():
     m["method"] = args.method
 
     ds_tag = f"_{args.dataset}" if args.dataset != "mmlu_pro" else ""
-    out = LOG_DIR / f"rebuttal_cotb_{args.method}_{model_short}{ds_tag}_seed{args.seed}_{datetime.now():%Y%m%d_%H%M%S}.json"
+    out = LOG_DIR / f"ablation4_cot_{args.method}_{model_short}{ds_tag}_seed{args.seed}_{datetime.now():%Y%m%d_%H%M%S}.json"
     with open(out, "w") as f:
         json.dump({
             "experiment": args.method,

@@ -55,14 +55,14 @@ Ablation sweeps are controlled from the same script:
 
 ### Ablation 4 — prefix variants
 
-`rebuttal_experiments.py` runs the five prefix variants compared in
+`ablation4_prefix_variants.py` runs the five prefix variants compared in
 Sec. 4.6 and Appendix F of the paper. Each variant reuses an existing
 `experiment_*.json` game trajectory (no game replay) and writes a
-`rebuttal_<variant>_*.json`:
+`ablation4_<variant>_*.json`:
 
 ```bash
 # Static hint (fixed generic "you tend to over-report confidence" prompt)
-python rebuttal_experiments.py --experiment e1a \
+python ablation4_prefix_variants.py --experiment e1a \
     --model meta-llama/Meta-Llama-3.1-8B-Instruct \
     --dataset mmlu_pro --seed 42
 
@@ -73,12 +73,12 @@ python rebuttal_experiments.py --experiment e1a \
 
 ### Ablation 4 — CoT-matched baseline sweep
 
-`rebuttal_cot_baseline.py` adds a kojima-style CoT trigger to each of Top-K,
+`ablation4_cot_baselines.py` adds a kojima-style CoT trigger to each of Top-K,
 Self-Cal, FaR so every baseline shares REHEARSE's reasoning scaffold (Sec. 4.6
 and Appendix G):
 
 ```bash
-python rebuttal_cot_baseline.py --method topk_cot \
+python ablation4_cot_baselines.py --method topk_cot \
     --model meta-llama/Meta-Llama-3.1-8B-Instruct \
     --dataset mmlu_pro --seed 42
 # --method also accepts selfcal_cot, far_cot
@@ -108,24 +108,13 @@ any baseline row:
 | `xiong_cot`        | Xiong CoT (App.)    |
 | `kojima_cot`       | Kojima CoT (App.)   |
 
-## Reproducing paper figures
-
-```bash
-export GAME_HISTORY_DIR=./game_history    # dir of *.txt game logs
-export FIG_OUT_DIR=./figures
-python plot_paper.py     # game-score trajectory curves
-python plot_pareto.py    # ECE-vs-Accuracy Pareto plot
-```
-
 ## Repo layout
 
 ```
-run_experiment.py          # canonical paper pipeline (game + prefix + REHEARSE + Ablations 1-3)
-rebuttal_experiments.py    # Ablation 4 prefix variants (static hint, shuffled, random, compressed, cross-model)
-rebuttal_cot_baseline.py   # Ablation 4 CoT-matched baseline sweep (Top-K/Self-Cal/FaR + CoT)
-aggregate_metrics.py       # reproduce paper's Acc/ECE/Brier/AUROC from the JSONs above
-plot_paper.py              # game-trajectory figure
-plot_pareto.py             # ECE-Accuracy Pareto figure
+run_experiment.py              # canonical paper pipeline (game + prefix + REHEARSE + Ablations 1-3)
+ablation4_prefix_variants.py   # Ablation 4 prefix variants (static hint, shuffled, random, compressed, cross-model)
+ablation4_cot_baselines.py     # Ablation 4 CoT-matched baseline sweep (Top-K/Self-Cal/FaR + CoT)
+aggregate_metrics.py           # reproduce paper's Acc/ECE/Brier/AUROC from the JSONs above
 requirements.txt
 LICENSE
 ```

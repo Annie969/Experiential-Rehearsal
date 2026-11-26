@@ -2,7 +2,7 @@
 
 Sidecar to run_experiment.py. Each variant reuses an existing game
 trajectory stored in logs/experiment_*.json (no game replay) and
-produces logs/rebuttal_<variant>_*.json so the main-pipeline outputs
+produces logs/ablation4_<variant>_*.json so the main-pipeline outputs
 are untouched.
 
 Variants reported in Sec. 4.6 and Appendix F of the paper:
@@ -307,7 +307,7 @@ def main():
     m["cross_model_short"] = args.cross_model_short
 
     ds_tag = f"_{args.dataset}" if args.dataset != "mmlu_pro" else ""
-    out = LOG_DIR / f"rebuttal_{args.experiment}_{model_short}{ds_tag}_seed{args.seed}_{datetime.now():%Y%m%d_%H%M%S}.json"
+    out = LOG_DIR / f"ablation4_{args.experiment}_{model_short}{ds_tag}_seed{args.seed}_{datetime.now():%Y%m%d_%H%M%S}.json"
     with open(out, "w") as f:
         json.dump({
             "experiment": args.experiment,
